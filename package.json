@@ -2,6 +2,10 @@
   "name": "tfclassifier",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://nileshsp.github.io/reactTfClassifier",
+  "repository": {
+    "url": "https://github.com/NileshSP/reactTfClassifier"
+  },
   "dependencies": {
     "@tensorflow-models/knn-classifier": "^1.0.0",
     "@tensorflow-models/mobilenet": "^1.0.0",
