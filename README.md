@@ -1,7 +1,7 @@
 # reactTfClassifier
 Sample web app built using react & tensorflow
 
-Checkout the live [demo](https://nileshsp.github.io/reacttfclassifier)
+Checkout the live [demo](https://nileshsp.github.io/reactTfClassifier)
 
 Clone the repository `https://github.com/NileshSP/reactTfClassifier.git`
 
