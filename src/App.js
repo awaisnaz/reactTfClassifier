@@ -75,7 +75,6 @@ class App extends Component {
 
         const classes = ['A', 'B', 'C'];
         const output = { prediction: classes[result.classIndex], probability: result.confidences[result.classIndex] };
-        //console.log(output);
         this.results.current.innerText = `
           prediction: ${output.prediction}\n
           probability: ${output.probability}
