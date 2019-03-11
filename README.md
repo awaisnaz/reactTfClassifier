@@ -1,9 +1,7 @@
 # reactTfClassifier
 Sample web app built using react & tensorflow
 
-Checkout the live [demo](https://reactTfClassifier.herokuapp.com)
-
-Project is published to heroku using [Dockerfile](https://github.com/NileshSP/reactTfClassifier/blob/master/Dockerfile)
+Checkout the live [demo](https://nileshsp.github.io/reacttfclassifier)
 
 Clone the repository `https://github.com/NileshSP/reactTfClassifier.git`
 
