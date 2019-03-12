@@ -20,6 +20,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    document.title = "ML classifer app"
     Promise.all([this.loadModel(),this.setupWebcam()]).then(_ => this.runClassifier());
   }
 
