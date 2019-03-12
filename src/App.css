@@ -2,7 +2,13 @@
   text-align: center;
 }
 
-.mainContainer {
+.loadingContainer {
+  position: relative;
+  top:40px;
+  color:red;
+}
+
+.workingContainer {
   margin:3px;
   padding-top:15px;
   display:grid;
@@ -10,6 +16,7 @@
   grid-gap: 10px;
   justify-items: center;
   align-content: center;
+  animation: fadeinOpacity 2s ease-in;
 }
 
 .btnContainer {
@@ -30,6 +37,12 @@ button {
   box-shadow: 2px 2px 2px 1px lightslategray;
 }
 
+@keyframes fadeinOpacity {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 video {
   border-radius: 15px;
+  animation: fadeinOpacity 2s ease-in;
 }

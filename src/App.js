@@ -12,42 +12,82 @@ class App extends Component {
     this.btnA = React.createRef();  
     this.btnB = React.createRef();  
     this.btnC = React.createRef();
-    this.results = React.createRef();  
+    this.results = React.createRef();
+    this.state = {
+      results: '',
+      cameraLoading: 'Loading ...'
+    }  
   }
 
   componentDidMount() {
-    this.app();
+    Promise.all([this.loadModel(),this.setupWebcam()]).then(_ => this.runClassifier());
+  }
+
+  async loadModel() {
+    return new Promise(async (resolve, reject) => {
+      console.log('Loading mobilenet..');
+      try {
+        // Load the model.
+        let net = await mobilenet.load();
+        await this.setState({ netModel: net }); 
+        console.log('Sucessfully loaded model');
+        return resolve();        
+      } catch (error) {
+        console.log('model mobilenet could not be loaded..');
+        return reject()
+      }
+    });
   }
  
   async setupWebcam() {
+    console.log('Loading cam setup..');
     return new Promise((resolve, reject) => {
       const navigatorAny = navigator;
       navigator.getUserMedia = navigator.getUserMedia ||
           navigatorAny.webkitGetUserMedia || navigatorAny.mozGetUserMedia ||
           navigatorAny.msGetUserMedia;
-      if (navigator.getUserMedia) {
+        if (navigator.getUserMedia) {
+        navigator.permissions.query({name:'camera'}).then(result => {
+          if(result.state !== 'granted') {
+            this.setState({ 
+              cameraLoading: 'Kindly grant access to the camera' 
+            })     
+          }
+        })  
         navigator.getUserMedia({video: true},
           stream => {
-            //Object.assign(this.webcamElement.current, {srcObject:stream}, {'onloadeddata':() => resolve()})
-             this.webcamElement.current.srcObject = stream;
-             this.webcamElement.current.addEventListener('loadeddata',  () => resolve(), false);
-            return resolve();
+            this.setState({ 
+              cameraLoading: '' 
+            }, () => {
+              //Object.assign(this.webcamElement.current, {srcObject:stream}, {'onloadeddata':() => resolve()})
+              this.webcamElement.current.srcObject = stream;
+              this.webcamElement.current.addEventListener('loadeddata',  () => resolve(), false);
+              console.log('cam setup complete!!');
+              return resolve();
+            });               
           },
-          error => reject());
+          error => { 
+            this.setState({ 
+                cameraLoading: 'Kindly grant access to the camera' 
+              }
+              , () => reject()
+            );               
+          }
+        );
       } else {
-        reject();
+          this.setState({ 
+            cameraLoading: 'Camera not available' 
+          }
+          , () => reject()
+        );               
       }
     });
   }
 
-  async app() {
-    console.log('Loading mobilenet..');
+  async runClassifier() {
+    console.log('classifier started...');
 
-    // Load the model.
-    let net = await mobilenet.load();
-    console.log('Sucessfully loaded model');
-
-    await this.setupWebcam();
+    let net = this.state.netModel;
 
     let classifier = knnClassifier.create();
     // Reads an image from the webcam and associates it with a specific class
@@ -65,7 +105,7 @@ class App extends Component {
     this.btnA.current.addEventListener('click', () => addExample(0));
     this.btnB.current.addEventListener('click', () => addExample(1));
     this.btnC.current.addEventListener('click', () => addExample(2));
-
+    //let count = 0
     while (true) {
       if (classifier.getNumClasses() > 0) {
         // Get the activation from mobilenet from the webcam.
@@ -75,10 +115,13 @@ class App extends Component {
 
         const classes = ['A', 'B', 'C'];
         const output = { prediction: classes[result.classIndex], probability: result.confidences[result.classIndex] };
-        this.results.current.innerText = `
-          prediction: ${output.prediction}\n
-          probability: ${output.probability}
-        `;
+        this.setState({
+          results: `prediction: ${output.prediction} with probability: ${output.probability} `
+        });
+        // this.results.current.innerText = `
+        //   prediction: ${output.prediction}\n
+        //   probability: ${output.probability}
+        // `;
       }
 
       await tf.nextFrame();
@@ -89,15 +132,33 @@ class App extends Component {
     return (
       <div className="App" >
         <div className="mainContainer">
-          <div>
-            <video autoPlay playsInline muted width="80%" height="80%" ref={this.webcamElement} ></video>
-          </div>
-          <div className="btnContainer">
-            <button ref={this.btnA}>Add A</button>
-            <button ref={this.btnB}>Add B</button>
-            <button ref={this.btnC}>Add C</button>
-          </div>
-          <div ref={this.results} ></div>
+          {this.state.cameraLoading === '' 
+          ? 
+            (
+              <div className="workingContainer">
+                <div>
+                  <video autoPlay playsInline muted width="80%" height="80%" ref={this.webcamElement} ></video>
+                </div>
+                <div className="btnContainer">
+                  <button ref={this.btnA}>Add A</button>
+                  <button ref={this.btnB}>Add B</button>
+                  <button ref={this.btnC}>Add C</button>
+                </div>
+                <div ref={this.results} >
+                  {this.state.results}
+                </div>
+                <div >
+                  <div>
+                      Snap a view using the available buttons to learn and recognize in the continuously snapping stream
+                  </div>
+                </div>
+              </div>
+            )
+          : 
+            (
+              <div className="loadingContainer" >{this.state.cameraLoading}</div>
+            )
+          }
         </div>
       </div>
     );
