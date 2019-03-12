@@ -48,10 +48,29 @@ video {
 }
 
 .results {
+  min-width: 280px;
   color: green;
+  text-align: left;
+  font-weight: bold;
+  border:solid 0px red;
 }
 
-.information > ul > li {
-  list-style: none;
+.results > ul {
+  width:100%;
+  list-style: none ;
   padding:5px;
+  text-align:left;
+  border:solid 0px blue;
+}
+
+.results > ul > li {
+  padding:4px;
+  width:100%;
+  border-bottom:solid 0.5px green;
+}
+.information > ul > li {
+  max-width: 700px;
+  list-style: lower-greek  ;
+  padding:5px;
+  text-align: justify;
 }

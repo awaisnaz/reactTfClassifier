@@ -90,8 +90,7 @@ class App extends Component {
     let net = this.state.netModel;
 
     let classifier = knnClassifier.create();
-    // Reads an image from the webcam and associates it with a specific class
-    // index.
+    // Reads an image from the webcam and associates it with a specific class index.
     const addExample = classId => {
       // Get the intermediate activation of MobileNet 'conv_preds' and pass that
       // to the KNN classifier.
@@ -105,9 +104,10 @@ class App extends Component {
     this.btnA.current.addEventListener('click', () => addExample(0));
     this.btnB.current.addEventListener('click', () => addExample(1));
     this.btnC.current.addEventListener('click', () => addExample(2));
-    //let count = 0
+
     while (true) {
       if (classifier.getNumClasses() > 0) {
+
         // Get the activation from mobilenet from the webcam.
         const activation = net.infer(this.webcamElement.current, 'conv_preds');
         // Get the most likely class and confidences from the classifier module.
@@ -115,13 +115,7 @@ class App extends Component {
 
         const classes = ['A', 'B', 'C'];
         const output = { prediction: classes[result.classIndex], probability: result.confidences[result.classIndex] };
-        this.setState({
-          results: `prediction: ${output.prediction} with probability: ${output.probability} `
-        });
-        // this.results.current.innerText = `
-        //   prediction: ${output.prediction}\n
-        //   probability: ${output.probability}
-        // `;
+        this.results.current.innerHTML = `<ul><li>Prediction&nbsp;&nbsp;: ${output.prediction} </li><li>Probability&nbsp;: ${output.probability} </li></ul>`
       }
 
       await tf.nextFrame();
@@ -138,6 +132,9 @@ class App extends Component {
               <div className="workingContainer">
                 <h1>Machine learning for image classification</h1>
                 <div>
+                  (for best experience try in chrome browser)
+                </div>
+                <div>
                   <video autoPlay playsInline muted width="80%" height="80%" ref={this.webcamElement} ></video>
                 </div>
                 <div className="btnContainer">
@@ -146,15 +143,17 @@ class App extends Component {
                   <button ref={this.btnC}>Add C</button>
                 </div>
                 <div ref={this.results} className="results" >
-                  {this.state.results}
                 </div>
                 <div className="information" >
                   <ul>
                     <li>
-                      Snap a view using the available buttons(in presented order) to recognize and learn to show results accordingly in green
+                      Snap a view using the available buttons(in presented order) to recognize and learn
                     </li>
                     <li>
-                      Try snapping the tilting faces as Add A(left), Add B(center) and Add C(right) mutiple times i.e atleast 3 times or more to show accurate prediction
+                      For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e atleast 3 times or more
+                    </li>
+                    <li>
+                      Try tilting faces from left to right to display predictions accordingly
                     </li>
                   </ul>                    
                 </div>
