@@ -46,3 +46,12 @@ video {
   border-radius: 15px;
   animation: fadeinOpacity 2s ease-in;
 }
+
+.results {
+  color: green;
+}
+
+.information > ul > li {
+  list-style: none;
+  padding:5px;
+}

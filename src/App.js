@@ -136,6 +136,7 @@ class App extends Component {
           ? 
             (
               <div className="workingContainer">
+                <h1>Machine learning for image classification</h1>
                 <div>
                   <video autoPlay playsInline muted width="80%" height="80%" ref={this.webcamElement} ></video>
                 </div>
@@ -144,13 +145,18 @@ class App extends Component {
                   <button ref={this.btnB}>Add B</button>
                   <button ref={this.btnC}>Add C</button>
                 </div>
-                <div ref={this.results} >
+                <div ref={this.results} className="results" >
                   {this.state.results}
                 </div>
-                <div >
-                  <div>
-                      Snap a view using the available buttons to learn and recognize in the continuously snapping stream
-                  </div>
+                <div className="information" >
+                  <ul>
+                    <li>
+                      Snap a view using the available buttons(in presented order) to recognize and learn to show results accordingly in green
+                    </li>
+                    <li>
+                      Try snapping the tilting faces as Add A(left), Add B(center) and Add C(right) mutiple times i.e atleast 3 times or more to show accurate prediction
+                    </li>
+                  </ul>                    
                 </div>
               </div>
             )
