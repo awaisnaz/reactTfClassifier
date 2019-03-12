@@ -155,6 +155,9 @@ class App extends Component {
                     <li>
                       Try tilting faces from left to right to display predictions accordingly
                     </li>
+                    <li>
+                      All of the image data from camera stream is processed and recognized to learned locally in the browser and is not stored or accessed on any remote server
+                    </li>
                   </ul>                    
                 </div>
                 <div className="footer">
