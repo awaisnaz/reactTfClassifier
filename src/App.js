@@ -130,12 +130,12 @@ class App extends Component {
           ? 
             (
               <div className="workingContainer">
-                <h1>Machine learning for image classification</h1>
-                <div>
-                  (for best experience try in chrome browser)
-                </div>
+                <h2>Machine learning for image classification</h2>
                 <div>
                   <video autoPlay playsInline muted width="80%" height="80%" ref={this.webcamElement} ></video>
+                </div>
+                <div>
+                  (for best experience try in chrome browser)
                 </div>
                 <div className="btnContainer">
                   <button ref={this.btnA}>Add A</button>
@@ -150,12 +150,15 @@ class App extends Component {
                       Snap a view using the available buttons(in presented order) to recognize and learn
                     </li>
                     <li>
-                      For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e atleast 3 times or more
+                      For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times or more
                     </li>
                     <li>
                       Try tilting faces from left to right to display predictions accordingly
                     </li>
                   </ul>                    
+                </div>
+                <div className="footer">
+                  Project available on github <a href="https://github.com/NileshSP/reactTfClassifier" >@NileshSP/reactTfClassifier</a> 
                 </div>
               </div>
             )
