@@ -19,7 +19,7 @@ class MLApp extends Component {
   }
 
   componentDidMount() {
-    document.title = "ML Classfier App"
+    document.title = "ML Classifier App"
     Promise.all([this.loadModel(),this.setupWebcam()]).then(_ => this.runClassifier());
   }
 
