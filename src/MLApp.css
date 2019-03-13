@@ -35,6 +35,12 @@
   border-radius:4px;
   border: 0px;
   box-shadow: 2px 2px 2px 1px lightslategray;
+  color:steelblue;
+}
+
+.select > select > option {
+  color:steelblue;
+  font-size:9pt;
 }
 
 .btnContainer {
