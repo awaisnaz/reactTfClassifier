@@ -1,6 +1,6 @@
 {
   "short_name": "ML Web App",
-  "name": "ML Sample Web App",
+  "name": "ML Classifier App",
   "description": "Machine Learning with image classification sample webapp",
   "icons": [
       {
