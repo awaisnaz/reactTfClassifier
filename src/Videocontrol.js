@@ -156,7 +156,7 @@ class Videocontrol extends Component {
           )     
         :
           (
-            <div className="loadingContainer" >{this.state.cameraLoading}</div>
+            <div className="loadingMessage" >{this.state.cameraLoading}</div>
           )
         }
       </div>

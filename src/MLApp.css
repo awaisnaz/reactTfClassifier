@@ -6,11 +6,51 @@
 }
 
 .loadingContainer {
+  position: relative;
+  top: 50px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;  
+}
+  
+.loadingContainer::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  border: 0px solid white;
+  transform: translate(-50%, -50%);
+  animation: loading 1000ms ease-out forwards infinite;
+}
+
+@keyframes loading {
+  0% {
+    border: 0px solid white;
+  }
+  
+  20% {
+    border: 2px solid white;
+    width: 0%;
+    height: 0%;
+  }
+  
+  100% {
+    border: 4px solid white;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.loadingMessage {
   min-height: 100px;
   position: relative;
   top:40px;
   color:red;
-}
+} 
 
 .workingContainer {
   margin:3px;
@@ -71,6 +111,10 @@ button {
   background-color: lightskyblue;
   border: 0px;
   box-shadow: 2px 2px 2px 1px lightslategray;
+}
+
+button:hover {
+  cursor: pointer;
 }
 
 @keyframes fadeinOpacity {

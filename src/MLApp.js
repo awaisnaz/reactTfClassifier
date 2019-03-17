@@ -14,7 +14,7 @@ class Mlapp extends Component {
     this.classifier = knnClassifier.create();
     this.state = {
       netModel: null,
-      classes: ['A','B','C'],
+      classes: ['A','B','C', 'Reset'],
       classCount: 0,
       cameraLoading: 'Loading ...'
     }  
@@ -23,7 +23,8 @@ class Mlapp extends Component {
   componentDidMount() {
     document.title = "ML Classifier App"
     this.loadMLModel().then(_ => { 
-      this.updateState({ cameraLoading : '' }); this.runClassifier() 
+      this.updateState({ cameraLoading : '' }); 
+      this.runClassifier() 
     });
   }
 
@@ -68,7 +69,6 @@ class Mlapp extends Component {
 
     while (true) {
       if (this.classifier.getNumClasses() > 0) {
-
         // Get the activation from mobilenet from the webcam.
         const activation = net.infer(this.videoElement.videoElement, 'conv_preds');
         // Get the most likely class and confidences from the classifier module.
@@ -78,11 +78,72 @@ class Mlapp extends Component {
         const output = { prediction: classes[result.classIndex]
           , probability: (result.confidences[result.classIndex] !== null && result.confidences[result.classIndex] !== undefined ? result.confidences[result.classIndex] * 100 : 0) 
         };
-        this.results.current.innerHTML = `<ul><li>Prediction&nbsp;&nbsp;: ${output.prediction} </li><li>Probability&nbsp;: ${output.probability} </li></ul>`
+        this.results.current.innerHTML = 
+              (output.prediction !== undefined) 
+                  ? `<ul><li>Prediction&nbsp;&nbsp;: ${output.prediction} </li><li>Probability&nbsp;: ${output.probability + '%'} </li></ul>`
+                  : ``
       }
 
       await tf.nextFrame();
     }
+  }
+
+  instructionList() {
+    return (
+      <div className="information" >
+        <h4>(Instructions)</h4>
+        <ul>
+        {
+          [
+            "Snap multiple views using the available buttons(in presented order as A -> B -> C) to recognize and learn, for each button hit - it would start displaying prediction with probability subsequently"
+            ,"For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times each or more is recommended (prediction is certainly more accurate the more image snapshots are learned)"
+            ,"Try tilting faces from left to right freely to show expected predictions or refine it further by continuing with the respective buttons as desired"
+            ,"All of the data from camera stream is processed and recognized to learn locally and is not stored or accessed on any remote server"
+          ].map((item, idx) => <li key={idx} >{item}</li>)
+        }
+        </ul>
+      </div>
+    )                    
+  }
+
+  buttonList() {
+    return (
+      <div className="btnContainer">
+      {
+        this.state.classes
+        .map((item,idx) => 
+            <button 
+              key={`btn${item+idx}`} ref={input => this[`btn${item}`] = input} 
+              onClick={_ => { 
+                if(item.toLowerCase() !== 'reset') {
+                  this.addExample(idx) 
+                }
+                else {
+                  //window.location.reload();
+                  this.classifier.clearAllClasses();
+                  this.updateState({ classCount: 0 });
+                  this.results.current.innerHTML = ''
+                }
+              }} 
+              disabled={
+                ((item.toLowerCase() === 'reset' && this.state.classCount > 0) 
+                  ? false
+                  : !( idx <= this.state.classCount ))}
+            >
+              {(item.toLowerCase() !== 'reset' ? "Add " : "") + item}
+            </button>
+          )
+      }
+      </div>  
+    )
+  }
+
+  footer() {
+    return (
+    <div className="footer">
+      Project available on github <a href="https://github.com/NileshSP/reactTfClassifier" target="_blank" rel="noopener noreferrer" >@NileshSP/reactTfClassifier</a> 
+    </div>
+    )
   }
 
   render() {
@@ -93,48 +154,23 @@ class Mlapp extends Component {
           ? 
             (
               <div className="workingContainer">
-                <h2>Machine learning for image classification</h2>
+                <h2>Machine learning for video classification</h2>
                 <React.Suspense fallback={<div className="loadingContainer" >Loading...</div>} >
                   <Videocontrol parentState={this.state} 
                       parentStateUpdate={options => this.updateState(options)} 
                       ref={item => this.videoElement = item} 
                       />
                 </React.Suspense>
-                <div className="btnContainer">
-                  {
-                    this.state.classes
-                          .map((item,idx) => <button 
-                                                key={`btn${item+idx}`} ref={input => this[`btn${item}`] = input} 
-                                                onClick={_ => this.addExample(idx)} 
-                                                disabled={!( this.state.classCount >= idx )}
-                                              >
-                                                Add {item}
-                                              </button>
-                              )
-                  }
-                </div>
+                { this.buttonList() }
                 <div ref={this.results} className="results" >
                 </div>
-                <div className="information" >
-                  <ul>
-                  {
-                    [
-                      "Snap a view using the available buttons(in presented order as A -> B -> C) to recognize and learn"
-                      ,"For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times each or more is recommended (prediction is certainly more accurate the more image snapshots are learned)"
-                      ,"Try tilting faces from left to right to display predictions accordingly"
-                      ,"All of the image data from camera stream is processed and recognized to learn locally and is not stored or accessed on any remote server"
-                    ].map((item, idx) => <li key={idx} >{item}</li>)
-                  }
-                  </ul>                    
-                </div>
-                <div className="footer">
-                  Project available on github <a href="https://github.com/NileshSP/reactTfClassifier" target="_blank" rel="noopener noreferrer" >@NileshSP/reactTfClassifier</a> 
-                </div>
+                { this.instructionList() }
+                { this.footer() }
               </div>
             )
           : 
             (
-              <div className="loadingContainer" >{this.state.cameraLoading}</div>
+              <div className="loadingContainer" ></div>
             )
           }
         </div>
