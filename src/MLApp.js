@@ -8,24 +8,28 @@ const Videocontrol = React.lazy(() => import("./Videocontrol"))
 
 class Mlapp extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.results = React.createRef();
     this.classifier = knnClassifier.create();
     this.state = {
       netModel: null,
       classes: ['A','B','C', 'Reset'],
       classCount: 0,
-      cameraLoading: 'Loading ...'
+      modelLoading: 'Loading ...'
     }  
   }
 
   componentDidMount() {
     document.title = "ML Classifier App"
     this.loadMLModel().then(_ => { 
-      this.updateState({ cameraLoading : '' }); 
+      this.updateState({ modelLoading : '' }); 
       this.runClassifier() 
     });
+  }
+
+  componentWillUnmount() {
+    this.classifier = null;
   }
 
   updateState = async (options) => await this.setState({...this.state, ...options}) 
@@ -88,25 +92,23 @@ class Mlapp extends Component {
     }
   }
 
-  instructionList() {
-    return (
-      <div className="information" >
-        <h4>(Instructions)</h4>
-        <ul>
-        {
-          [
-            "Snap multiple views using the available buttons(in presented order as A -> B -> C) to recognize and learn, for each button hit - it would start displaying prediction with probability subsequently"
-            ,"For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times each or more is recommended (prediction is certainly more accurate the more image snapshots are learned)"
-            ,"Try tilting faces from left to right freely to show expected predictions or refine it further by continuing with the respective buttons as desired"
-            ,"All of the data from camera stream is processed and recognized to learn locally and is not stored or accessed on any remote server"
-          ].map((item, idx) => <li key={idx} >{item}</li>)
-        }
-        </ul>
-      </div>
-    )                    
+  headerComponent() {
+    return <h2>Machine learning for video classification</h2>
   }
 
-  buttonList() {
+  videoComponent() {
+    return (
+      <React.Suspense fallback={<div className="loadingContainer" >Loading...</div>} >
+        <Videocontrol 
+          parentState={this.state} 
+          parentStateUpdate={options => this.updateState(options)} 
+          ref={item => this.videoElement = item} 
+        />
+      </React.Suspense>
+    )
+  }
+
+  buttonListComponent() {
     return (
       <div className="btnContainer">
       {
@@ -138,7 +140,30 @@ class Mlapp extends Component {
     )
   }
 
-  footer() {
+  resultsComponent() {
+    return <div ref={this.results} className="results" >
+    </div>
+  }
+
+  instructionListComponent() {
+    return (
+      <div className="information" >
+        <h4>(Instructions)</h4>
+        <ul>
+        {
+          [
+            "Snap multiple views using the available buttons(in presented order as A -> B -> C) to recognize and learn, for each button hit - it would start displaying prediction with probability subsequently"
+            ,"For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times each or more is recommended (prediction is certainly more accurate the more image snapshots are learned)"
+            ,"Try tilting faces from left to right freely to show expected predictions or refine it further by continuing with the respective buttons as desired"
+            ,"All of the data from camera stream is processed and recognized to learn locally and is not stored or accessed on any remote server"
+          ].map((item, idx) => <li key={idx} >{item}</li>)
+        }
+        </ul>
+      </div>
+    )                    
+  }
+
+  footerComponent() {
     return (
     <div className="footer">
       Project available on github <a href="https://github.com/NileshSP/reactTfClassifier" target="_blank" rel="noopener noreferrer" >@NileshSP/reactTfClassifier</a> 
@@ -150,22 +175,16 @@ class Mlapp extends Component {
     return (
       <div className="App" >
         <div className="mainContainer">
-          {this.state.cameraLoading === '' 
+          {this.state.modelLoading === '' 
           ? 
             (
               <div className="workingContainer">
-                <h2>Machine learning for video classification</h2>
-                <React.Suspense fallback={<div className="loadingContainer" >Loading...</div>} >
-                  <Videocontrol parentState={this.state} 
-                      parentStateUpdate={options => this.updateState(options)} 
-                      ref={item => this.videoElement = item} 
-                      />
-                </React.Suspense>
-                { this.buttonList() }
-                <div ref={this.results} className="results" >
-                </div>
-                { this.instructionList() }
-                { this.footer() }
+                { this.headerComponent() }
+                { this.videoComponent() }
+                { this.buttonListComponent() }
+                { this.resultsComponent() }
+                { this.instructionListComponent() }
+                { this.footerComponent() }
               </div>
             )
           : 
