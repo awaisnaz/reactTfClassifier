@@ -117,10 +117,17 @@ button {
   background-color: lightskyblue;
   border: 0px;
   box-shadow: 2px 2px 2px 1px lightslategray;
+  outline: none;
 }
 
-button:hover {
+button:enabled:hover {
   cursor: pointer;
+  background-color: rgb(69, 179, 248);
+  color:white;
+}
+
+button:active {
+  transform: scale(1.15)  
 }
 
 @keyframes fadeinOpacity {
@@ -155,7 +162,15 @@ video {
   border-bottom:solid 0.5px green;
 }
 
-.information > ul > li {
+h4 {
+  margin:5px 0px 0px 0px;
+}
+
+.instructions > ul {
+  margin:0px;
+}
+
+.instructions > ul > li {
   min-width: 280px;
   max-width: 700px;
   list-style: lower-greek;

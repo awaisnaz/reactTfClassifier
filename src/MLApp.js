@@ -93,7 +93,9 @@ class Mlapp extends Component {
   }
 
   headerComponent() {
-    return <h2>Machine learning for video classification</h2>
+    return (
+      <h2>Machine learning for video classification</h2>
+    )
   }
 
   videoComponent() {
@@ -147,7 +149,7 @@ class Mlapp extends Component {
 
   instructionListComponent() {
     return (
-      <div className="information" >
+      <div className="instructions" >
         <h4>(Instructions)</h4>
         <ul>
         {
