@@ -1,3 +1,6 @@
+:root {
+  --shadow3d: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 .App {
   padding:0px;
   margin:0px;
@@ -80,6 +83,10 @@ h2 {
   animation: fadeinOpacity 2s ease-in;
 }
 
+video {
+  box-shadow: var(--shadow3d);
+}
+
 .optionsContainer {
   display:grid;
   grid-auto-flow: row;
@@ -89,10 +96,14 @@ h2 {
   width:300px;
 }
 
+.optionsContainer > div > label {
+  display:none;
+}
+
 .select > select {
   border-radius:4px;
   border: 0px;
-  box-shadow: 2px 2px 2px 1px lightslategray;
+  box-shadow: var(--shadow3d);
   color:steelblue;
 }
 
@@ -116,7 +127,7 @@ button {
   border-radius: 15px;
   background-color: lightskyblue;
   border: 0px;
-  box-shadow: 2px 2px 2px 1px lightslategray;
+  box-shadow: var(--shadow3d);
   outline: none;
 }
 

@@ -6,4 +6,4 @@ Checkout the live [demo](https://nileshsp.github.io/reactTfClassifier)
 Clone the repository `https://github.com/NileshSP/reactTfClassifier.git`
 
 Open terminal to start react client app as:
- `npm start`
+ `npm install` && `npm start`
