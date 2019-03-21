@@ -80,7 +80,7 @@ h2 {
   grid-gap: 10px;
   justify-items: center;
   align-content: center;
-  animation: fadeinOpacity .75s ease-in;
+  animation: fadeinOpacity .6s ease-in;
 }
 
 .optionsContainer {
@@ -115,7 +115,7 @@ h2 {
 
 video {
   border-radius: 15px;
-  animation: fadeinOpacity .5s ease-in;
+  animation: fadeinOpacity .25s ease-in;
   box-shadow: var(--shadow3d);
 }
 
