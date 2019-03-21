@@ -24,6 +24,8 @@ class Mlapp extends Component {
 
   componentDidMount() {
     document.title = "ML Classifier App"
+    this.loadingInterval = setInterval(this.smile, 4000)  
+    this.loadSmiley()
     this.loadMLModel().then(_ => { 
       this.updateState({ modelLoading : '' });
       this.runClassifier();
@@ -34,6 +36,23 @@ class Mlapp extends Component {
     this.classifier = null;
     this.loadingInterval = null; 
     this.videoElement = null;
+  }
+
+  loadSmiley() {
+    if(this.loadingSmiley !== undefined) {
+      let a = this.loadingSmiley.current;
+      a.style = 'position: absolute; top:25%; left:48%; font-size:40pt; color:limegreen';
+      a.innerHTML = "&#xf11a;";
+      setTimeout(function () {
+          a.innerHTML = "&#xf118;";
+        }, 1000);
+      setTimeout(function () {
+          a.innerHTML = "&#xf11a;";
+        }, 2000);
+      setTimeout(function () {
+          a.innerHTML = "&#xf118;";
+        }, 3000);
+    }
   }
 
   updateState = async (options) => await this.setState({...this.state, ...options}) 
