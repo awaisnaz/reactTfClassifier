@@ -147,7 +147,7 @@ class Videocontrol extends Component {
                 </div>
               </div>
               <div>
-                  <video autoPlay playsInline muted width="80%" height="80%" ref={item => this.videoElement = item} ></video>
+                  <video autoPlay playsInline muted width="60%" height="60%" ref={item => this.videoElement = item} ></video>
               </div>
               <div>
                 (for best experience try in chrome browser)
