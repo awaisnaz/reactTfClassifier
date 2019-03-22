@@ -17,7 +17,8 @@ class Mlapp extends Component {
       netModel: null,
       classes: ['A','B','C', 'Reset'],
       classCount: 0,
-      modelLoading: 'Loading ...'
+      modelLoading: 'Loading ...',
+      mediaControlReady: false
     }  
   }
 
@@ -85,10 +86,14 @@ class Mlapp extends Component {
         const output = { prediction: classes[result.classIndex]
           , probability: (result.confidences[result.classIndex] !== null && result.confidences[result.classIndex] !== undefined ? result.confidences[result.classIndex] * 100 : 0) 
         };
-        this.results.current.innerHTML = 
-              (output.prediction !== undefined) 
-                  ? `<ul><li>Prediction&nbsp;&nbsp;: ${output.prediction} </li><li>Probability&nbsp;: ${output.probability + '%'} </li></ul>`
-                  : ``
+        let resultText = '';
+        if(output.prediction !== undefined) {
+          resultText = `<ul><li>Prediction&nbsp;&nbsp;: ${output.prediction} </li><li>Probability&nbsp;: ${output.probability + '%'} </li></ul>`;
+        }
+        else {
+        }
+        this.results.current.innerHTML = resultText;
+        this.results.current.style.visibility = (resultText.trim() !== '' ? 'visible' : 'hidden');
       }
 
       await tf.nextFrame();
@@ -105,8 +110,7 @@ class Mlapp extends Component {
     return (
       <React.Suspense fallback={<div className="loadingContainer" >Loading...</div>} >
         <Videocontrol 
-          parentState={this.state} 
-          parentStateUpdate={options => this.updateState(options)} 
+          parentStateUpdate={async (options) => await this.updateState(options)} 
           ref={item => this.videoElement = item} 
         />
       </React.Suspense>
@@ -126,20 +130,20 @@ class Mlapp extends Component {
                   this.addExample(idx) 
                 }
                 else {
-                  //window.location.reload();
                   this.classifier.clearAllClasses();
                   this.updateState({ classCount: 0 });
                   this.results.current.innerHTML = ''
                 }
               }} 
               disabled={
-                ((item.toLowerCase() === 'reset' && this.state.classCount > 0) 
+                ((item.toLowerCase() === 'reset' && this.state.classCount > 0)
                   ? false
-                  : !( idx <= this.state.classCount ))}
+                  : (!( idx <= this.state.classCount ) || !(this.state.mediaControlReady)) )
+              }
             >
               {(item.toLowerCase() !== 'reset' ? "Add " : "") + item}
-            </button>
-          )
+           </button>
+        )
       }
       </div>  
     )
