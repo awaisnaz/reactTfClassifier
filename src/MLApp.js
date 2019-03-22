@@ -157,7 +157,7 @@ class Mlapp extends Component {
   instructionListComponent() {
     return (
       <div className="instructions" >
-        <h4>(Instructions)</h4>
+        <h4>Instructions</h4>
         <ul>
         {
           [

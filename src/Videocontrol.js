@@ -23,7 +23,14 @@ class Videocontrol extends Component {
     const audioOutputSelect = this.audioOutput.current;
     const videoSelect = this.videoSource.current;
     const selectors = [audioInputSelect, audioOutputSelect, videoSelect];
-    
+
+    const audioSource = audioInputSelect.value;
+    const videoSource = videoSelect.value;
+    const constraints = {
+      audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
+      video: {deviceId: videoSource ? {exact: videoSource} : undefined}
+    };
+  
     audioOutputSelect.disabled = !('sinkId' in HTMLMediaElement.prototype);
     
     function gotDevices(deviceInfos) {
@@ -88,6 +95,7 @@ class Videocontrol extends Component {
     
     async function gotStream(stream) {
       window.stream = stream; // make stream available to console
+      videoElement.style.visibility = 'visible';
       videoElement.srcObject = stream;
       await instance.props.parentStateUpdate({ mediaControlReady: true })
       // Refresh button list in case labels have become available
@@ -99,7 +107,8 @@ class Videocontrol extends Component {
         navigator.permissions.query({name:'camera'}).then(result => {
           if(result.state !== 'granted') {
             //console.log(this.props)
-            instance.setState({ cameraLoading: 'Kindly grant access to the camera' });     
+            instance.setState({ cameraLoading: 'Kindly grant access to the camera' });
+            navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).catch(handleError);
           }
         }) 
       }   
@@ -112,12 +121,6 @@ class Videocontrol extends Component {
           track.stop();
         });
       }
-      const audioSource = audioInputSelect.value;
-      const videoSource = videoSelect.value;
-      const constraints = {
-        audio: {deviceId: audioSource ? {exact: audioSource} : undefined},
-        video: {deviceId: videoSource ? {exact: videoSource} : undefined}
-      };
       navigator.mediaDevices.getUserMedia(constraints).then(gotStream).then(gotDevices).catch(handleError);
     }
     
@@ -148,7 +151,7 @@ class Videocontrol extends Component {
                 </div>
               </div>
               <div>
-                  <video autoPlay playsInline muted width="60%" height="60%" ref={item => this.videoElement = item} ></video>
+                  <video autoPlay playsInline muted width="60%" height="60%" ref={item => this.videoElement = item} required ></video>
               </div>
               <div>
                 (for best experience try in chrome browser)
