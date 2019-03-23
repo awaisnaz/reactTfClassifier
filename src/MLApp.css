@@ -2,6 +2,9 @@
   --shadow3d: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   --elemColor: lightskyblue;
   --animateAfter: 10;
+  --showInstructions:true;
+  --videoWidth:80%;
+  --videoHeight:80%;
 }
 .App {
   padding:0px;
@@ -82,6 +85,8 @@ h2 {
   justify-items: center;
   align-content: center;
   animation: fadeinOpacity .6s ease-in;
+  --videoWidth:80%;
+  --videoHeight:80%;
 }
 
 .optionsContainer {
@@ -162,6 +167,12 @@ button:active {
   transition: 500ms;
 }
 
+@keyframes elementScale {
+  0% { transform: scale(1) }
+  50% { transform: scale(1.3) }
+  100% { transform: scale(1) }
+}
+
 button:enabled:first-of-type {
   animation: elementScale 1s ease-in-out calc(var(--animateAfter) * 1s) 2 normal forwards;
 }
@@ -188,26 +199,33 @@ button:enabled:first-of-type {
   border-bottom:solid 0.5px green;
 }
 
-@keyframes elementScale {
-  0% { transform: scale(1) }
-  50% { transform: scale(1.3) }
-  100% { transform: scale(1) }
-}
-
-.instructions > h4 {
-  margin:5px 0px 0px 0px;
-  animation: elementScale 1s ease-in-out 3s 2 normal forwards;
+@keyframes elementPopUp {
+  0% { transform: translateY(0px) scale(1) }
+  50% { transform: translateY(-22px) scale(1.3) }
+  100% { transform: translateY(0px) scale(1) }
 }
 
 .instructions {
-  transition: transform 2s; 
+  --showInstructions:true;
+  transition: transform 2s;
+  z-index:1; 
 }
 
-.instructions > ul {
+.instructions summary {
+  font-weight: bold;
+  margin:5px 0px 0px 0px;
+  list-style: none;
+  cursor:pointer;
+  outline:none;
+  animation: elementPopUp 1s ease-in-out 3s 2 normal forwards;
+  border: solid 0px red;
+}
+
+.instructions ul {
   margin:0px;
 }
 
-.instructions > ul > li {
+.instructions li {
   min-width: 280px;
   max-width: 700px;
   list-style: lower-greek;
@@ -218,4 +236,15 @@ button:enabled:first-of-type {
 .footer {
   font-size: 10pt;
   color:gray;
+}
+
+@media screen and (max-width: 600px) {
+  .videoContainer {
+    --videoWidth:60%;
+    --videoHeight:60%;
+  }
+
+  .instructions {
+  --showInstructions:false;
+  }
 }

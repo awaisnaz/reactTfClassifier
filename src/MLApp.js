@@ -18,15 +18,40 @@ class Mlapp extends Component {
       classes: ['A','B','C', 'Reset'],
       classCount: 0,
       modelLoading: 'Loading ...',
-      mediaControlReady: false
+      mediaControlReady: false,
+      showDetails: false,
+      videoSize: {
+        width: '80%',
+        height: '80%'
+      },
+      updateInstructionsState: async () => {
+        const cssInstructionsValue = getComputedStyle(document.querySelector(".instructions"))
+                          .getPropertyValue('--showInstructions');
+        this.updateState({ showDetails: (cssInstructionsValue === 'true' ? true : false) });
+      },
+      updateVideoSize: async () => {
+        try {          
+          const videoElem = getComputedStyle(document.querySelector(".videoContainer"));
+          const cssVideoWidthValue = videoElem.getPropertyValue('--videoWidth'); 
+          const cssVideoHeightValue = videoElem.getPropertyValue('--videoHeight'); 
+          this.updateState({
+            videoSize : {
+              width: cssVideoWidthValue
+              ,height: cssVideoHeightValue
+            }
+          })           
+        } catch (error) {  }
+    }    
     }  
   }
 
   componentDidMount() {
     document.title = "ML Classifier App"
+    window.addEventListener('resize', () => this.screenResize())
     this.loadMLModel().then(_ => { 
       this.updateState({ modelLoading : '' });
       this.runClassifier();
+      this.screenResize();
     });
   }
 
@@ -34,9 +59,15 @@ class Mlapp extends Component {
     this.classifier = null;
     this.loadingInterval = null; 
     this.videoElement = null;
+    window.removeEventListener('resize', () => this.screenResize())
   }
 
   updateState = async (options) => await this.setState({...this.state, ...options}) 
+
+  async screenResize() {
+    await this.state.updateVideoSize();
+    await this.state.updateInstructionsState();
+  } 
 
   async loadMLModel() {
     return new Promise(async (resolve, reject) => {
@@ -110,6 +141,7 @@ class Mlapp extends Component {
     return (
       <React.Suspense fallback={<div className="loadingContainer" >Loading...</div>} >
         <Videocontrol 
+          parentState={this.state}
           parentStateUpdate={async (options) => await this.updateState(options)} 
           ref={item => this.videoElement = item} 
         />
@@ -157,17 +189,19 @@ class Mlapp extends Component {
   instructionListComponent() {
     return (
       <div className="instructions" >
-        <h4>Instructions</h4>
-        <ul>
-        {
-          [
-            "Snap multiple views using the available buttons(in presented order as A -> B -> C) to recognize and learn, for each button hit - it would start displaying prediction with probability subsequently"
-            ,"For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times each or more is recommended (prediction is certainly more accurate the more image snapshots are learned)"
-            ,"Try tilting faces from left to right freely to show expected predictions or refine it further by continuing with the respective buttons as desired"
-            ,"All of the data from camera stream is processed and recognized to learn locally and is not stored or accessed on any remote server"
-          ].map((item, idx) => <li key={idx} >{item}</li>)
-        }
-        </ul>
+        <details open={this.state.showDetails}>
+          <summary>Instructions</summary>
+          <ul>
+          {
+            [
+              "Snap multiple views using the available buttons(in presented order as A -> B -> C) to recognize and learn, for each button hit - it would start displaying prediction with probability subsequently"
+              ,"For instance, capture the tilting faces in directions for buttons as Add A(left), Add B(center) and Add C(right) mutiple times i.e. atleast 3 times each or more is recommended (prediction is certainly more accurate the more image snapshots are learned)"
+              ,"Try tilting faces from left to right freely to show expected predictions or refine it further by continuing with the respective buttons as desired"
+              ,"All of the data from camera stream is processed and recognized to learn locally and is not stored or accessed on any remote server"
+            ].map((item, idx) => <li key={idx} >{item}</li>)
+          }
+          </ul>
+        </details>
       </div>
     )                    
   }

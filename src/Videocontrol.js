@@ -9,7 +9,7 @@ class Videocontrol extends Component {
     this.videoSource = React.createRef();
     this.videoElement = null;
     this.state = {
-      cameraLoading: ''
+      cameraLoading: '',
     }
   }
 
@@ -151,7 +151,7 @@ class Videocontrol extends Component {
                 </div>
               </div>
               <div>
-                  <video autoPlay playsInline muted width="60%" height="60%" ref={item => this.videoElement = item} required ></video>
+                  <video autoPlay playsInline muted width={this.props.parentState.videoSize.width} height={this.props.parentState.videoSize.height} ref={item => this.videoElement = item} required ></video>
               </div>
               <div>
                 (for best experience try in chrome browser)
