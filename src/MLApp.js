@@ -10,9 +10,11 @@ class Mlapp extends Component {
 
   constructor(props) {
     super(props);
+    this.loadingContainer = React.createRef();
     this.results = React.createRef();
     this.classifier = knnClassifier.create();
     this.loadingInterval = null;
+    this.storageKey = 'MLMODEL';
     this.state = {
       netModel: null,
       classes: ['A','B','C', 'Reset'],
@@ -26,7 +28,7 @@ class Mlapp extends Component {
       },
       updateInstructionsState: async () => {
         const cssInstructionsValue = getComputedStyle(document.querySelector(".instructions"))
-                          .getPropertyValue('--showInstructions');
+                                        .getPropertyValue('--showInstructions');
         this.updateState({ showDetails: (cssInstructionsValue === 'true' ? true : false) });
       },
       updateVideoSize: async () => {
@@ -45,15 +47,11 @@ class Mlapp extends Component {
     }  
   }
 
-  componentDidMount() {
-    document.title = "ML Classifier App"
-    window.addEventListener('resize', () => this.screenResize())
-    this.loadMLModel().then(_ => { 
-      this.updateState({ modelLoading : '' });
-      this.runClassifier();
-      this.screenResize();
-    });
-  }
+  async componentDidMount() {
+    window.addEventListener('resize', () => this.screenResize());
+    document.title = "ML Classifier App";
+    this.checkOnlineStatusAndLoadApp();
+}
 
   componentWillUnmount() {
     this.classifier = null;
@@ -67,8 +65,51 @@ class Mlapp extends Component {
   async screenResize() {
     await this.state.updateVideoSize();
     await this.state.updateInstructionsState();
-  } 
+  }
 
+  async loadApp() {
+    try {      
+      this.loadMLModel()
+        .then(() => {
+          this.updateState({ modelLoading : '' });
+          this.runClassifier();
+          this.screenResize();  
+        })
+        .finally(() => console.log('model process completed..'));        
+    } catch (error) {
+        console.dir(`error caused: ${error}`)
+    }
+  }
+
+  async checkOnlineStatusAndLoadApp() {
+    let internetState = navigator.onLine;
+
+    const updateOnlineStatus = async () => {
+      internetState = navigator.onLine;
+      console.log(`navigator online state: ${internetState}`)
+      const condition = internetState ? "online" : "offline";
+      console.log(`condition state ${condition}`)
+      
+      await this.updateState({ modelLoading : 'Loading ...' });
+
+      const loadingContRef = this.loadingContainer.current;
+      loadingContRef.innerHTML = '';
+
+      loadingContRef.className = 'loadingContainer';
+      await this.loadApp();
+
+      if(!internetState) { 
+        loadingContRef.className = 'loadingMessage';
+        loadingContRef.innerHTML = 'Online availability is required to load ML model initially from remote server for this app to function!!';  
+      }
+    }
+
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    await updateOnlineStatus();
+    return internetState;
+  }
+  
   async loadMLModel() {
     return new Promise(async (resolve, reject) => {
       console.log('Loading mobilenet..');
@@ -85,7 +126,6 @@ class Mlapp extends Component {
     });
   }
  
-
   // Reads an image from the webcam and associates it with a specific class index.
   async addExample(classId) {
     const net = this.state.netModel;
@@ -100,7 +140,6 @@ class Mlapp extends Component {
     this.updateState({ classCount: (classId + 1 > this.state.classCount ? classId + 1 : this.state.classCount) })
   };
   
-
   async runClassifier() {
     console.log('classifier started...');
 
@@ -232,7 +271,7 @@ class Mlapp extends Component {
             )
           : 
             (
-              <div className="loadingContainer" ></div>
+              <div className="loadingContainer" ref={this.loadingContainer} ></div>
             )
           }
         </div>
