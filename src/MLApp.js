@@ -48,10 +48,10 @@ class Mlapp extends Component {
   }
 
   async componentDidMount() {
-    window.addEventListener('resize', () => this.screenResize());
-    document.title = "ML Classifier App";
-    this.checkOnlineStatusAndLoadApp();
-}
+      window.addEventListener('resize', () => this.screenResize());
+      document.title = "ML Classifier App";
+      this.checkOnlineStatusAndLoadApp();
+  }
 
   componentWillUnmount() {
     this.classifier = null;
@@ -62,9 +62,32 @@ class Mlapp extends Component {
 
   updateState = async (options) => await this.setState({...this.state, ...options}) 
 
-  async screenResize() {
-    await this.state.updateVideoSize();
-    await this.state.updateInstructionsState();
+  async checkOnlineStatusAndLoadApp() {
+    let internetState = navigator.onLine;
+
+    const updateOnlineStatus = async () => {
+      internetState = navigator.onLine;
+      console.log(`navigator online state: ${internetState}`)
+     
+      await this.updateState({ modelLoading : 'Loading ...' });
+
+      const loadingContRef = this.loadingContainer.current;
+      loadingContRef.innerHTML = '';
+      loadingContRef.className = 'loadingContainer';
+
+      if (internetState) { 
+        await this.loadApp();
+      }
+      else { 
+        loadingContRef.className = 'loadingMessage';
+        loadingContRef.innerHTML = 'Online availability is required to load ML model initially from remote server for this app to function!!';  
+      }
+    }
+
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    await updateOnlineStatus();
+    return internetState;
   }
 
   async loadApp() {
@@ -81,35 +104,6 @@ class Mlapp extends Component {
     }
   }
 
-  async checkOnlineStatusAndLoadApp() {
-    let internetState = navigator.onLine;
-
-    const updateOnlineStatus = async () => {
-      internetState = navigator.onLine;
-      console.log(`navigator online state: ${internetState}`)
-      const condition = internetState ? "online" : "offline";
-      console.log(`condition state ${condition}`)
-      
-      await this.updateState({ modelLoading : 'Loading ...' });
-
-      const loadingContRef = this.loadingContainer.current;
-      loadingContRef.innerHTML = '';
-
-      loadingContRef.className = 'loadingContainer';
-      await this.loadApp();
-
-      if(!internetState) { 
-        loadingContRef.className = 'loadingMessage';
-        loadingContRef.innerHTML = 'Online availability is required to load ML model initially from remote server for this app to function!!';  
-      }
-    }
-
-    window.addEventListener('online',  updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-    await updateOnlineStatus();
-    return internetState;
-  }
-  
   async loadMLModel() {
     return new Promise(async (resolve, reject) => {
       console.log('Loading mobilenet..');
@@ -126,20 +120,6 @@ class Mlapp extends Component {
     });
   }
  
-  // Reads an image from the webcam and associates it with a specific class index.
-  async addExample(classId) {
-    const net = this.state.netModel;
-    if(net !== null && ((this.classifier.getNumClasses() > 0 && classId > 0) || (this.classifier.getNumClasses() >= 0 && classId === 0))) {
-      // Get the intermediate activation of MobileNet 'conv_preds' and pass that
-      // to the KNN classifier.
-      const activation = net.infer(this.videoElement.videoElement, 'conv_preds');
-
-      // Pass the intermediate activation to the classifier.
-      await this.classifier.addExample(activation, classId);
-    }
-    this.updateState({ classCount: (classId + 1 > this.state.classCount ? classId + 1 : this.state.classCount) })
-  };
-  
   async runClassifier() {
     console.log('classifier started...');
 
@@ -170,6 +150,25 @@ class Mlapp extends Component {
     }
   }
 
+  // Reads an image from the webcam and associates it with a specific class index.
+  async addExample(classId) {
+    const net = this.state.netModel;
+    if(net !== null && ((this.classifier.getNumClasses() > 0 && classId > 0) || (this.classifier.getNumClasses() >= 0 && classId === 0))) {
+      // Get the intermediate activation of MobileNet 'conv_preds' and pass that
+      // to the KNN classifier.
+      const activation = net.infer(this.videoElement.videoElement, 'conv_preds');
+
+      // Pass the intermediate activation to the classifier.
+      await this.classifier.addExample(activation, classId);
+    }
+    this.updateState({ classCount: (classId + 1 > this.state.classCount ? classId + 1 : this.state.classCount) })
+  };
+  
+  async screenResize() {
+    await this.state.updateVideoSize();
+    await this.state.updateInstructionsState();
+  }
+  
   headerComponent() {
     return (
       <h2>Machine learning for video classification</h2>
