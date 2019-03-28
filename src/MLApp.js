@@ -14,7 +14,6 @@ class Mlapp extends Component {
     this.results = React.createRef();
     this.classifier = knnClassifier.create();
     this.loadingInterval = null;
-    this.storageKey = 'MLMODEL';
     this.state = {
       netModel: null,
       classes: ['A','B','C', 'Reset'],
@@ -75,17 +74,17 @@ class Mlapp extends Component {
       loadingContRef.innerHTML = '';
       loadingContRef.className = 'loadingContainer';
 
-      if (internetState) { 
+      // if (internetState) { 
         await this.loadApp();
-      }
-      else { 
-        loadingContRef.className = 'loadingMessage';
-        loadingContRef.innerHTML = 'Online availability is required to load ML model initially from remote server for this app to function!!';  
-      }
+      // }
+      // else { 
+      //   loadingContRef.className = 'loadingMessage';
+      //   loadingContRef.innerHTML = 'Online availability is required to load ML model initially from remote server for this app to function!!';  
+      // }
     }
 
     window.addEventListener('online',  updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    //window.addEventListener('offline', updateOnlineStatus);
     await updateOnlineStatus();
     return internetState;
   }
