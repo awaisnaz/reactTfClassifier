@@ -26,23 +26,30 @@ class Mlapp extends Component {
         height: '80%'
       },
       updateInstructionsState: async () => {
-        const cssInstructionsValue = getComputedStyle(document.querySelector(".instructions"))
-                                        .getPropertyValue('--showInstructions');
-        this.updateState({ showDetails: (cssInstructionsValue === 'true' ? true : false) });
+        try {
+          const cssInstructionsValue = getComputedStyle(document.querySelector(".instructions"))
+          .getPropertyValue('--showInstructions');
+          await this.updateState({ showDetails: (cssInstructionsValue === 'true' ? true : false) });
+        }
+        catch(error) { 
+          console.log(`Error caused at updateInstructionsState() : ${error}`) 
+        }
       },
       updateVideoSize: async () => {
         try {          
           const videoElem = getComputedStyle(document.querySelector(".videoContainer"));
           const cssVideoWidthValue = videoElem.getPropertyValue('--videoWidth'); 
           const cssVideoHeightValue = videoElem.getPropertyValue('--videoHeight'); 
-          this.updateState({
+          await this.updateState({
             videoSize : {
               width: cssVideoWidthValue
               ,height: cssVideoHeightValue
             }
           })           
-        } catch (error) {  }
-    }    
+        } catch (error) { 
+          console.log(`Error caused at updateVideoSize() : ${error}`)  
+        }
+      }    
     }  
   }
 
@@ -75,7 +82,7 @@ class Mlapp extends Component {
       loadingContRef.className = 'loadingContainer';
 
       // if (internetState) { 
-        await this.loadApp();
+        this.loadApp();
       // }
       // else { 
       //   loadingContRef.className = 'loadingMessage';
@@ -90,16 +97,17 @@ class Mlapp extends Component {
   }
 
   async loadApp() {
-    try {      
-      this.loadMLModel()
-        .then(() => {
-          this.updateState({ modelLoading : '' });
-          this.runClassifier();
-          this.screenResize();  
-        })
-        .finally(() => console.log('model process completed..'));        
+    try {
+      await this.loadMLModel();
+      await this.updateState({ modelLoading : '' });      
+      setTimeout(async() => {     
+        await this.screenResize();
+      }, 1000);
+      this.runClassifier();      
     } catch (error) {
         console.dir(`error caused: ${error}`)
+    } finally {
+      console.log('model loading in app completed..')
     }
   }
 
@@ -164,6 +172,7 @@ class Mlapp extends Component {
   };
   
   async screenResize() {
+    console.log(`screenResize() called..`)
     await this.state.updateVideoSize();
     await this.state.updateInstructionsState();
   }
