@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Mlapp from './Mlapp';
+import Mlapp from './mlapp';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<Mlapp />, document.getElementById('root'));

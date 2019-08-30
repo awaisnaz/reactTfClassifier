@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import * as knnClassifier from "@tensorflow-models/knn-classifier";
 import * as mobilenet from "@tensorflow-models/mobilenet";
 import * as tf from "@tensorflow/tfjs";
-import './Mlapp.css';
+import './mlapp.css';
 
-const Videocontrol = React.lazy(() => import("./Videocontrol"))
+const Videocontrol = React.lazy(() => import("./videocontrol"))
 
 class Mlapp extends Component {
 
