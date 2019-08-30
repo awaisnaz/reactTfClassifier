@@ -3,7 +3,16 @@ Sample web app built using react & tensorflow to learn and detect the options th
 
 Checkout the live [demo](https://nileshsp.github.io/reactTfClassifier)
 
-Clone the repository `https://github.com/NileshSP/reactTfClassifier.git`
+Clone the repository by executing in terminal as 
+<br/>
+<br/>
+`git clone https://github.com/NileshSP/reactTfClassifier.git` 
+<br/>
+or 
+<br/>
+`npx degit https://github.com/NileshSP/reactTfClassifier.git`
+<br/>
+<br/>
 
-Open terminal to start react client app as:
+Start react client app as:
  `npm install` && `npm start`
