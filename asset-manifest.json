@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/reactTfClassifier/static/css/main.ad48efa9.chunk.css",
+    "main.js": "/reactTfClassifier/static/js/main.bd30110d.chunk.js",
+    "main.js.map": "/reactTfClassifier/static/js/main.bd30110d.chunk.js.map",
+    "runtime~main.js": "/reactTfClassifier/static/js/runtime~main.76f470ac.js",
+    "runtime~main.js.map": "/reactTfClassifier/static/js/runtime~main.76f470ac.js.map",
+    "static/js/2.5aa599fd.chunk.js": "/reactTfClassifier/static/js/2.5aa599fd.chunk.js",
+    "static/js/2.5aa599fd.chunk.js.map": "/reactTfClassifier/static/js/2.5aa599fd.chunk.js.map",
+    "static/js/3.abce8382.chunk.js": "/reactTfClassifier/static/js/3.abce8382.chunk.js",
+    "static/js/3.abce8382.chunk.js.map": "/reactTfClassifier/static/js/3.abce8382.chunk.js.map",
+    "index.html": "/reactTfClassifier/index.html",
+    "precache-manifest.4fa225969cd990737744ca8c62b565f3.js": "/reactTfClassifier/precache-manifest.4fa225969cd990737744ca8c62b565f3.js",
+    "service-worker.js": "/reactTfClassifier/service-worker.js",
+    "static/css/main.ad48efa9.chunk.css.map": "/reactTfClassifier/static/css/main.ad48efa9.chunk.css.map"
+  }
+}
